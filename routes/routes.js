@@ -1,5 +1,7 @@
 var passport = require('passport');
 var FacebookStrategy = require('passport-facebook').Strategy;
+var https = require('https');
+// var getIndex = require('../routes/getIndex.js');
 
 module.exports = function(app) {
 
@@ -17,6 +19,35 @@ module.exports = function(app) {
   // });
 
   app.get('/', function(req, res){
+    var options = {
+      hostname: 'graph.facebook.com',
+      port: 443,
+      path: '/1043010258?fields=name,about',//,friends.fields(name)',
+      method: 'GET'
+    };
+
+    var req = https.request(options, function(res) {
+      console.log("statusCode: ", res.statusCode);
+      console.log("headers: ", res.headers);
+
+      res.on('data', function(d) {
+        process.stdout.write(d);
+      });
+    });
+    req.end();
+
+    req.on('error', function(e) {
+      console.error(e);
+    });
+
+    // var urlPath = '1043010258?fields=name,about';  //,friends.fields(name)';
+    // https.get("https://graph.facebook.com/" + urlPath, function(res) {
+    //   console.log(res); 
+    //   console.log("Got response: " + res.statusCode);
+    // });// .on('error', function(e) {
+    //   console.log("Got error: " + e.message);
+    // });
+
     res.render('index', { user: req.user, title: 'Express'});
   });
 
