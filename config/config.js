@@ -1,3 +1,7 @@
+var path = require('path');
+var express = require('express');
+var passport = require('passport');
+
 module.exports = function(app) {
   // all environments
   app.set('port', process.env.PORT || 3000);

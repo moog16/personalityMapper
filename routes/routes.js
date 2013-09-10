@@ -2,6 +2,7 @@ var passport = require('passport');
 var FacebookStrategy = require('passport-facebook').Strategy;
 
 module.exports = function(app) {
+
   app.get('/', function(req, res){
     res.render('index', { user: req.user, title: 'Express'});
   });

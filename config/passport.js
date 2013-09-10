@@ -1,4 +1,5 @@
-
+var passport = require('passport');
+var FacebookStrategy = require('passport-facebook').Strategy;
 var FACEBOOK_APP_ID = "631478983538917"
 var FACEBOOK_APP_SECRET = "73182dc701059fd63f401e5b68773bd4";
 
