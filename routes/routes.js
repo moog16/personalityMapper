@@ -3,6 +3,19 @@ var FacebookStrategy = require('passport-facebook').Strategy;
 
 module.exports = function(app) {
 
+  app.options('*', function(req, res){
+    res.send(200); 
+  });
+
+  // Setup API blockade
+  // app.all('/', function(req, res, next) {
+  //   // passport gives us a 'isAuthenticated' method
+  //   // we'll check this method
+  //   if (req.isAuthenticated()) return next();
+
+  //   return res.redirect('/login');
+  // });
+
   app.get('/', function(req, res){
     res.render('index', { user: req.user, title: 'Express'});
   });
