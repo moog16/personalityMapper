@@ -9,10 +9,10 @@ module.exports = function(grunt) {
     watch: {
       js: {
         files: ['app.js', 'routes/', 'config/']
-      } //,
-      // html: {
-      //   // files: ['index.html']
-      // }
+      },
+      html: {
+        files: ['public/']
+      }
     },
     concurrent: {
       target: {

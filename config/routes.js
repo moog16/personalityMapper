@@ -12,13 +12,11 @@ module.exports = function(app) {
   });
 
   // Setup API blockade
-  // app.all('/', function(req, res, next) {
-  //   // passport gives us a 'isAuthenticated' method
-  //   // we'll check this method
-  //   if (req.isAuthenticated()) return next();
+  app.all('/UserHasLoggedIn', function(req, res, next) {
+    if (req.isAuthenticated()) return next(); // passport
+    return res.redirect('/');
+  });
 
-  //   return res.redirect('/login');
-  // });
   app.get('/', routes.index);
 
   app.get('/auth/facebook', auth.auth);
@@ -27,13 +25,9 @@ module.exports = function(app) {
   app.get('/UserHasLoggedIn', hasLogin.login);
 
 
-  app.get('/account', ensureAuthenticated, function(req, res){
-    res.render('account', { user: req.user });
-  });
-
-  app.get('/login', function(req, res){
-    res.render('login', { user: req.user });
-  });
+  // app.get('/account', ensureAuthenticated, function(req, res){
+  //   res.render('account', { user: req.user });
+  // });
 
   // GET /auth/facebook
   //   Use passport.authenticate() as route middleware to authenticate the
@@ -42,10 +36,7 @@ module.exports = function(app) {
   //   redirect the user back to this application at /auth/facebook/callback
   app.get('/auth/facebook',
     passport.authenticate('facebook'),
-    function(req, res){
-      // The request will be redirected to Facebook for authentication, so this
-      // function will not be called.
-    });
+    function(req, res){ /*not called*/ });
 
   // GET /auth/facebook/callback
   //   Use passport.authenticate() as route middleware to authenticate the
