@@ -1,9 +1,16 @@
 var passport = require('passport');
 var FacebookStrategy = require('passport-facebook').Strategy;
+var graph = require('fbgraph');
 var https = require('https');
 // var getIndex = require('../routes/getIndex.js');
 
 module.exports = function(app) {
+  var conf = {
+    client_id:      '631478983538917'
+  , client_secret:  '73182dc701059fd63f401e5b68773bd4'
+  , scope:          'email, user_about_me, user_location, publish_stream'
+  , redirect_uri:   'http://goom-server.nodejitsu.com:3000/auth/facebook'
+};
 
   app.options('*', function(req, res){
     res.send(200); 
@@ -17,32 +24,60 @@ module.exports = function(app) {
 
   //   return res.redirect('/login');
   // });
-
   app.get('/', function(req, res){
+    res.render("index", { title: "click link to connect" });
+  });
+
+  app.get('/auth/facebook', function(req, res) {
+
+    // we don't have a code yet
+    // so we'll redirect to the oauth dialog
+    if (!req.query.code) {
+      var authUrl = graph.getOauthUrl({
+          "client_id":     conf.client_id
+        , "redirect_uri":  conf.redirect_uri
+        , "scope":         conf.scope
+      });
+
+      if (!req.query.error) { //checks whether a user denied the app facebook login/permissions
+        res.redirect(authUrl);
+      } else {  //req.query.error == 'access_denied'
+        res.send('access denied');
+      }
+      return;
+    }
+
+    graph.authorize({
+        "client_id":      conf.client_id,
+        "redirect_uri":   conf.redirect_uri,
+        "client_secret":  conf.client_secret,
+        "code":           req.query.code
+    }, function (err, facebookRes) {
+      res.redirect('/UserHasLoggedIn');
+    });
+  });
+
+
+  // user gets sent here after being authorized
+  app.get('/UserHasLoggedIn', function(req, res) {
     var options = {
-      hostname: 'graph.facebook.com',
-      port: 443,
-      path: '/1043010258?fields=id,name,friends.fields(name)',
-      method: 'GET'
+        timeout:  3000
+      , pool:     { maxSockets:  Infinity }
+      , headers:  { connection:  "keep-alive" }
     };
 
-    var req = https.request(options, function(res) {
-      console.log("statusCode: ", res.statusCode);
-      console.log("headers: ", res.headers);
-
-      res.on('data', function(d) {
-        process.stdout.write(d);
-        console.log(d);
+    graph
+      .setOptions(options)
+      .get("1043010258?fields=id,name,friends.fields(name)", function(err, res) {
+        console.log(res);
+        // for(var i=0; i<res.friends.data.length; i++) {
+        //   console.log(res.friends.data[i].name);
+        // }
       });
-    });
-    req.end();
 
-    req.on('error', function(e) {
-      console.error(e);
-    });
-
-    res.render('index', { user: req.user, title: 'Express'});
+    res.render("index", { title: "Logged In" });
   });
+
 
   app.get('/account', ensureAuthenticated, function(req, res){
     res.render('account', { user: req.user });
