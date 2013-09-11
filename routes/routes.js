@@ -22,7 +22,7 @@ module.exports = function(app) {
     var options = {
       hostname: 'graph.facebook.com',
       port: 443,
-      path: '/1043010258?fields=name,about',//,friends.fields(name)',
+      path: '/1043010258?fields=id,name,friends.fields(name)',
       method: 'GET'
     };
 
@@ -32,6 +32,7 @@ module.exports = function(app) {
 
       res.on('data', function(d) {
         process.stdout.write(d);
+        console.log(d);
       });
     });
     req.end();
@@ -39,14 +40,6 @@ module.exports = function(app) {
     req.on('error', function(e) {
       console.error(e);
     });
-
-    // var urlPath = '1043010258?fields=name,about';  //,friends.fields(name)';
-    // https.get("https://graph.facebook.com/" + urlPath, function(res) {
-    //   console.log(res); 
-    //   console.log("Got response: " + res.statusCode);
-    // });// .on('error', function(e) {
-    //   console.log("Got error: " + e.message);
-    // });
 
     res.render('index', { user: req.user, title: 'Express'});
   });
