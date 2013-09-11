@@ -8,3 +8,4 @@ module.exports = function(app) {
   // Setup models
   mongoose.model('User', require('../models/User.js'));
 };
+  
