@@ -10,14 +10,9 @@ exports.login = function(req, res) {
   var d;
   graph
     .setOptions(options)
-    .get("me?fields=id,name,friends.fields(name)", function(err, res) {
-      console.log(res.friends.data);
-      //instead of console.log....res.send
-      d = res.friends.data;
-      // for(var i=0; i<res.friends.data.length; i++) {
-      //   console.log(res.friends.data[i].name);
-      // }
+    .get("me?fields=id,name,friends.fields(name)", function(err, FBres) {
+      console.log(FBres.friends.data);
     });
 
-  res.render("index", { title: "Logged In", names: d });
+  res.render("index", { title: "Logged In"});
 };
